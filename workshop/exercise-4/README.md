@@ -10,6 +10,33 @@ Istio's tracing and metrics features are designed to provide broad and granular 
 
 You can read more about how [Istio mixer enables telemetry reporting](https://istio.io/docs/concepts/policy-and-control/mixer.html).
 
+### Adding Datadog to Kubernetes
+
+To begin monitoring Istio using Datadog, you must first monitor Kubernetes.
+
+1. Start by setting up the Datadog RBAC role, service account, and role binding. Note that you can easily install all the yaml files in a directory by passing the directory name to `kubectl`.
+   ```console
+   kubectl apply -f datadog/rbac
+   ```
+
+2. Next, create the Datadog Agent [daemonset](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+   ```console
+   kubectl apply -f datadog/datadog-agent.yaml
+   ```
+
+3. Once the Datadog Agent is running, you'll see an Agent start event in your [Datadog Events Stream](https://app.datadoghq.com/event/stream). You'll also be able to view the containers running in your Kubernetes cluster in the [Datadog Container Map](https://app.datadoghq.com/infrastructure/map?node_type=container) and [Containers List](https://app.datadoghq.com/containers).
+
+### Monitoring Istio with Datadog
+
+Datadog can integrate with Istio in two ways:
+
+1. Using the [DogStatsD adapter](https://istio.io/docs/reference/config/policy-and-telemetry/adapters/datadog/) that comes with Istio to send DogStatsD metrics to the Datadog Agent.
+2. Using the [Istio integration](https://docs.datadoghq.com/integrations/istio/) built into the Datadog Agent to scrape exposed Prometheus endpoints in Istio.
+
+In this exercise we'll use the second method to monitor Istio. In [Exercise 2](../exercise-2/README.md), we installed Istio and started the Prometheus service, so we're already half-way done!
+
+1. 
+
 ### Configure Istio to receive telemetry data
 
 1. Verify that the Grafana, Prometheus, ServiceGraph and Jaeger add-ons were installed successfully. All add-ons are installed into the `istio-system` namespace.
