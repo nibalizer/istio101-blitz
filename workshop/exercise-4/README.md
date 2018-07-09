@@ -103,7 +103,7 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
 
    3. Generate a small load to the app.
       ```console
-      while sleep 0.5; do curl http://<guestbook_endpoint/; done
+      while sleep 0.5; do curl http://<guestbook_endpoint/lrange/guestbook; echo; done
       ```
 
    4. Log into your Datadog account and use the Metrics Explorer to view Istio metrics (e.g. [`istio.mesh.request.count`](https://app.datadoghq.com/metric/explorer?live=true&page=0&exp_metric=istio.mesh.request.count)) or create some Dashboards.
