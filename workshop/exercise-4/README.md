@@ -28,148 +28,78 @@ To begin monitoring Istio using Datadog, you must first monitor Kubernetes.
 
 ### Monitoring Istio with Datadog
 
-Datadog can integrate with Istio in two ways:
+Datadog can collect Istio metrics in two ways:
 
 1. Using the [DogStatsD adapter](https://istio.io/docs/reference/config/policy-and-telemetry/adapters/datadog/) that comes with Istio to send DogStatsD metrics to the Datadog Agent.
 2. Using the [Istio integration](https://docs.datadoghq.com/integrations/istio/) built into the Datadog Agent to scrape exposed Prometheus endpoints in Istio.
 
 In this exercise we'll use the second method to monitor Istio. In [Exercise 2](../exercise-2/README.md), we installed Istio and started the Prometheus service, so we're already half-way done!
 
-1. 
-
-### Configure Istio to receive telemetry data
-
-1. Verify that the Grafana, Prometheus, ServiceGraph and Jaeger add-ons were installed successfully. All add-ons are installed into the `istio-system` namespace.
+1. Create a [ConfigMap](https://docs.datadoghq.com/agent/basic_agent_usage/kubernetes/#configmap) to enable the Datadog-Istio integration.
    ```console
-   kubectl get pods -n istio-system
-
-   kubectl get services -n istio-system
+   kubectl apply -f datadog/istio-config.yaml
    ```
 
-2. Configure Istio to automatically gather telemetry data for services that run in the service mesh.
-   1. Go back to your v2 directory.
-      ````
-      cd guestbook/v2
-      ````
+2. Update the Datadog Agent daemonset to use your ConfigMap.
+   ```console
+   kubectl apply -f datadog/datadog-agent-istio.yaml
+   ```
 
-   2. Create a rule to collect telemetry data.
-      ```sh
-      istioctl create -f guestbook-telemetry.yaml
-      ```
-   3. Obtain the guestbook endpoint to access the guestbook.  
-      i. For paid cluster, you can acceess the guestbook via the external IP for your service as guestbook is deployed as a load blanacer service.  Get the EXTERNAL-IP of the guestbook service via output below:
+3. In order to run the daemonset changes, find the running Datadog Agent pod.
+   ```
+   kubectl get pods
+   NAME                            READY     STATUS    RESTARTS   AGE
+   datadog-agent-zkd72             1/1       Running   0          1h
+   guestbook-v1-f85d87ddc-572zp    2/2       Running   1          3h
+   ```
 
-      ```sh
+   In this example, the pod is `datadog-agent-zkd72`. Next, delete the running pod. The daemonset will automatically start a new pod using the updated configuration.
+   ```
+   kubectl delete po datadog-agent-zkd72
+   ```
+
+4. Now that Datadog is monitoring Istio, let's test it out by generating some load on your guestbook application.
+
+   1. For paid cluster, you can acceess the guestbook via the external IP for your service as guestbook is deployed as a load blanacer service.  Get the EXTERNAL-IP of the guestbook service via output below:
+      ```console
       kubectl get service guestbook -n default
       ```
-      
-      ii. For lite cluster, first, get the worker's public IP:
-      ```sh
+
+   2. For lite cluster, first, get the worker's public IP:
+      ```console
       bx cs workers <cluster_name>
       ```
-      
-          Examples: 
-          ```
-          bx cs workers cluster1
-          ID             Public IP      Private IP      Machine Type        State    Status   Zone    Version   
-          kube-xxx       169.60.87.20   10.188.80.69    u2c.2x4.encrypted   normal   Ready    wdc06   1.9.7_1510*   
-          ```
-   
+
+      Examples:
+      ```
+      bx cs workers cluster1
+      ID             Public IP      Private IP      Machine Type        State    Status   Zone    Version
+      kube-xxx       169.60.87.20   10.188.80.69    u2c.2x4.encrypted   normal   Ready    wdc06   1.9.7_1510*
+      ```
+
       Second, get the node port:
-      ```sh
+      ```console
       kubectl get svc guestbook -n default
       ```
-      
-          Examples:
-          ```
-          $ kubectl get svc guestbook -n default
-          NAME        TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE
-          guestbook   LoadBalancer   172.21.134.6   pending        80:31702/TCP   4d
-          ```
-      
+
+      Examples:
+      ```
+      $ kubectl get svc guestbook -n default
+      NAME        TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE
+      guestbook   LoadBalancer   172.21.134.6   pending        80:31702/TCP   4d
+      ```
+
       The node port in above sample output is `169.60.87.20:31702`
 
    3. Generate a small load to the app.
-      ```sh
+      ```console
       while sleep 0.5; do curl http://<guestbook_endpoint/; done
       ```
 
-## View guestbook telemetry data
+   4. Log into your Datadog account and use the Metrics Explorer to view Istio metrics (e.g. [`istio.mesh.request.count`](https://app.datadoghq.com/metric/explorer?live=true&page=0&exp_metric=istio.mesh.request.count)) or create some Dashboards.
 
-#### Jaeger
+## Distributing Tracing, Service Graphs & the Future
 
-1. Browse to your Jaeger service, after finding the service endpoint:
-
-      ```sh
-      kubectl get svc tracing -n istio-system
-      ```
-      
-          Examples:
-          ```
-          $ kubectl get svc tracing -n istio-system
-            NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-            tracing   LoadBalancer   172.21.35.209   169.60.1.1   80:30217/TCP   29m
-          ```
-
-   The service endpoint is `169.60.1.1` if the external IP is assigned.  If it is not assigned, you may access the tracing service via node port, using the same technique as described earlier for discovering the node port for the guestbook service.
-   
-2. From the **Services** menu, select either the **guestbook** or **analyzer** service.
-3. Scroll to the bottom and click on **Find Traces** button to see traces
-
-
-#### Grafana
-
-1. Establish port forwarding from local port 3000 to the Grafana instance:
-   ````
-   kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=grafana -o jsonpath='{.items[0].metadata.name}') 3000:3000
-   ````
-   
-2. Due to a known Istio dashboard performance issue with 0.8, browse to http://localhost:3000, and install the following dashboards:
-   1. Click on the `+` sign on the top left side, then click on the `import` menu
-   2. On the resulting page, click the `update .json File` button.
-   3. Navigate to the workshop/dashboards directory, and select the `istio-mesh-dashboard.json` file.
-   Repeat the above steps for the `istio-tcp-service-dashboard.json` and `istio-http-grpc-service-dashboard.json` files.
-
-3. Browse to http://localhost:3000 and navigate to the Istio Mesh Dashboard by clicking on the Home menu on the top left.
-
-
-#### Prometheus
-
-1. Establish port forwarding from local port 9090 to the Prometheus instance.
-
-   ```console
-   kubectl -n istio-system port-forward \
-     $(kubectl -n istio-system get pod -l app=prometheus -o jsonpath='{.items[0].metadata.name}') \
-     9090:9090
-   ```
-2. Browse to http://localhost:9090/graph, and in the “Expression” input box, enter: istio_request_count. Click Execute.
-
-#### Service Graph
-
-1. Establish port forwarding from local port 8088 to the Service Graph instance:
-
-   ```console
-   kubectl -n istio-system port-forward \
-     $(kubectl -n istio-system get pod -l app=servicegraph -o jsonpath='{.items[0].metadata.name}') \
-     8088:8088
-   ```  
-
-2. Browse to http://localhost:8088/dotviz
-
-
-## Understand what happened
-
-Although Istio proxies are able to automatically send spans, they need some hints to tie together the entire trace. Apps need to propagate the appropriate HTTP headers so that when the proxies send span information to Zipkin or Jaeger, the spans can be correlated correctly into a single trace.
-
-In the example, when a user visits the Guestbook app, the HTTP request is sent from the guestbook service to Watson Tone Analyzer. In order for the individual spans of guestbook service and Watson Tone Analyzer to be tied together, we have modified the guestbook service to extract the required headers (x-request-id, x-b3-traceid, x-b3-spanid, x-b3-parentspanid, x-b3-sampled, x-b3-flags, x-ot-span-context) and forward them onto the analyzer service when calling the analyzer service from the guestbook service.  The change is in the `v2/guestbook/main.go`. By using the `getForwardHeaders()` method, we are able to extract the required headers, and then we use the required headers further when calling the analyzer service via the `getPrimaryTone()` method.
-
-
-## Questions
-
-1. Does a user need to modify their app to get metrics for their apps?   A: 1. Yes 2. No.  (2 is correct)
-
-2. Does a user need to modify their app to get distributed tracing for their app to work properly? A: 1. Yes 2. No.  (1 is correct)
-
-3. What distributed tracing system does Istio support by default?  A: 1. Zipkin 2. Kibana 3. LogStash 4. Jaeger. (1 and 4 are correct)
+The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonset. For your own custom applications, you can use one of the [Datadog APM libraries](https://docs.datadoghq.com/developers/libraries/#apm-tracing-client-libraries) to instrument your application. However, just like Istio is a good point to collect telemetry in one place, it's also useful for easily seeing how all of your services communicate with each other. Support for Datadog APM directly in Istio is coming soon.
 
 #### [Continue to Exercise 5 - Expose the service mesh with the Istio Ingress Gateway](../exercise-5/README.md)
