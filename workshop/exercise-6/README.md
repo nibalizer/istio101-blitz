@@ -19,7 +19,7 @@ In the Guestbook app, there is one service: guestbook.  The guestbook service ha
 A/B testing is a method of performing identical tests against two separate service versions in order to determine which performs better.  To prevent Istio from performing the default routing behavior between the original and modernized guestbook service, define the following rules (found in [istio101/workshop/plans](https://github.com/IBM/istio101/tree/master/workshop/plans)):
 
 ```console
-istioctl replace -f virtualservice-all-v1.yaml
+istioctl create -f virtualservice-all-v1.yaml
 ```
 
 ```yaml
