@@ -18,8 +18,13 @@ To begin monitoring Istio using Datadog, you must first monitor Kubernetes.
    ```console
    kubectl apply -f datadog/rbac
    ```
+2. Next, retrieve your datadog api key (``DD_API_KEY``) from [here](https://app.datadoghq.com/account/settings#agent/kubernetes) and place it in ``datadog/datadog-agent.yaml``
 
-2. Next, create the Datadog Agent [daemonset](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+   ```console
+   vim datadog/datadog-agent.yaml
+   ```
+
+3. Next, create the Datadog Agent [daemonset](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
    ```console
    kubectl apply -f datadog/datadog-agent.yaml
    ```
@@ -39,13 +44,18 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
    ```console
    kubectl apply -f datadog/istio-config.yaml
    ```
+2. Again, retrieve your datadog api key (``DD_API_KEY``) from [here](https://app.datadoghq.com/account/settings#agent/kubernetes) and place it in ``datadog/datadog-agent.yaml``. You can also copy it from ``datadog/datadog-agent.yaml`` if you prefer.
 
-2. Update the Datadog Agent daemonset to use your ConfigMap.
+   ```console
+   vim datadog/datadog-agent-istio.yaml
+   ```
+
+3. Update the Datadog Agent daemonset to use your ConfigMap.
    ```console
    kubectl apply -f datadog/datadog-agent-istio.yaml
    ```
 
-3. In order to run the daemonset changes, find the running Datadog Agent pod.
+4. In order to run the daemonset changes, find the running Datadog Agent pod.
    ```
    kubectl get pods
    NAME                            READY     STATUS    RESTARTS   AGE
@@ -93,7 +103,7 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
 
    3. Generate a small load to the app.
       ```console
-      while sleep 0.5; do curl http://<guestbook_endpoint/; done
+      while sleep 0.5; do curl http://<guestbook_endpoint/lrange/guestbook; echo; done
       ```
 
    4. Log into your Datadog account and use the Metrics Explorer to view Istio metrics (e.g. [`istio.mesh.request.count`](https://app.datadoghq.com/metric/explorer?live=true&page=0&exp_metric=istio.mesh.request.count)) or create some Dashboards.
