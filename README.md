@@ -71,3 +71,4 @@ Twitch: [https://twitch.tv/ibmcode](https://twitch.tv/ibmcode)
 ## Further reading
 
 * [Networking in istio](https://istio.io/blog/2018/v1alpha3-routing/)
+* [Datadog Istio Adapter](https://docs.datadoghq.com/integrations/istio/)
