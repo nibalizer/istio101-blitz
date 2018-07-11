@@ -90,7 +90,7 @@ Learn how to set the context to work with your cluster by using the `kubectl` CL
 From your command line, run:
    
 ```bash   
-git clone https://github.com/IBM/istio101
+git clone https://github.com/DataDog/istio101
 
 cd istio101/workshop
 ```
