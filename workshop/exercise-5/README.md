@@ -2,13 +2,15 @@
 
 In this exercise, we'll upgrade the version of guestbook to v2, where we've implemented the use of an [avatar microservice](https://github.com/tobiaslins/avatar/) that automatically generates an avatar with every guestbook entry. We'll make use of Istio routing rules to do a canary deployment where the newer version is incrementally rolled out to users to minimize risk.
 
-First, let's deploy the avatar microservice that v2 will be using. Navigate into the `guestbook/v2` directory.
+First, let's deploy the avatar microservice that v2 will be using. Navigate into the `guestbook-dash/v2` directory.
 
 ```sh
-cd guestbook/v2
+cd guestbook-dash/v2
 ```
 
 ### Deploy Avatar Microservice
+
+Guestbook v2 requires the avatar microservice to be available. Deploy it to your cluster:
 
 1. Inject the Istio sidecar config into the Avatar deployment and deploy the microservice and sidecar to the cluster.
 ```sh
@@ -46,10 +48,12 @@ A/B testing is a method of performing identical tests against two separate servi
 
 To begin, let's route all traffic to Guestbook v1 and prevent default Istio routing behavior.
 
->TODO: CD TO THE RIGHT DIRECTORY
+```sh
+cd istio101/workshop/plans
+```
 
 ```console
-istioctl create -f virtualservice-all-v1.yaml
+istioctl replace -f virtualservice-all-v1.yaml
 ```
 
 ```yaml
@@ -93,7 +97,7 @@ spec:
 
 In the `DestinationRule`, we define two subsets for both versions of the guestbook app, v1 and v2. Within those subsets, we provide labels which match the v1 `subset` to the label `version: '1.0'` - recall that when we deployed guestbook with the `v1/guestbook-deployment.yaml` file, we provided that exact label. The `VirtualService` created above routes 100% of all traffic to a `subset` named v1.
 
-You can view the guestbook service UI using the IP address and port obtained in [Exercise 4](../exercise-4/README.md). Try it now by accessing it in your browser - you should see the familiar Guestbook v1.
+You can view the guestbook service using the IP address and port obtained in [Exercise 4](../exercise-4/README.md). Try it now by accessing it in your browser - you should see the familiar Guestbook v1.
 
 Next, enable access to Guestbook v2 for testing purposes. Realistically, you'd want to check for a header or cookie to route testers to the new version. Instead, we'll route all Firefox browsers to Guestbook v2. To enable this, modify the original `VirtualService` rule:
 
@@ -126,7 +130,7 @@ spec:
             subset: v1
 ```
 
-> Note: If you want to use a differnet browser, replace Firefox with Chrome, Safari, etc. based on the user-agent of that browser.
+> Note: If you want to use a different browser, replace Firefox with Chrome, Safari, etc. based on the user-agent of that browser.
 
 In Istio `VirtualService` rules, there can be only one rule for each service and therefore when defining multiple [HTTPRoute](https://istio.io/docs/reference/config/istio.networking.v1alpha3.html#HTTPRoute) blocks, the order in which they are defined in the yaml matters.  Hence, the original `VirtualService` rule is modified rather than creating a new rule.  With the modified rule, incoming requests originating from `Firefox` browsers will go to the newer version of guestbook.  All other requests fall-through to the next block, which routes all traffic to the original version of guestbook.  
 
@@ -176,8 +180,6 @@ Depending on whether a service handles [HTTP](https://istio.io/docs/reference/co
 * [Traffic Management](https://blog.openshift.com/istio-traffic-management-diving-deeper/)
 * [Circuit Breaking](https://blog.openshift.com/microservices-patterns-envoy-part-i/)
 * [Timeouts and Retries](https://blog.openshift.com/microservices-patterns-envoy-proxy-part-ii-timeouts-retries/)
-
-
 
 ## Questions
 1. Where are routing rules defined?  Options: (VirtualService, DestinationRule, ServiceEntry)  Answer: VirtualService

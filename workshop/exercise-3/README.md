@@ -9,7 +9,7 @@ The Guestbook app is a sample app for users to leave comments. It consists of a 
   ```
 2. Navigate into the app directory.
   ```sh
-  cd guestbook/v1
+  cd guestbook-dash/v1
   ```
 
 ### Create a Redis database
@@ -90,7 +90,8 @@ Now it's time to view the app. Since this is a free tier cluster, we'll be using
 ```sh
 kubectl get svc
 NAME           TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-guestbook      LoadBalancer   172.21.36.181   169.61.37.140   80:32149/TCP   5d
+guestbook      LoadBalancer   172.21.36.181   <none>          80:32149/TCP   5d
+...
 ```
 
 In this example, the port is ``32149`` which is the number following ``80:`` in the ``PORT(S)`` section.
@@ -99,7 +100,7 @@ In this example, the port is ``32149`` which is the number following ``80:`` in 
 
 
 ```sh
-$ bx cs  workers testcluster
+$ bx cs workers testcluster
 OK
 ID                                                 Public IP       Private IP    Machine Type   State    Status   Zone    Version   
 kube-hou02-pa1d801f8732df4e1fb8e067cfdcfa1646-w1   173.193.99.97   10.47.64.86   free           normal   Ready    hou02   1.9.8_1517 
