@@ -134,7 +134,7 @@ spec:
 
 In Istio `VirtualService` rules, there can be only one rule for each service and therefore when defining multiple [HTTPRoute](https://istio.io/docs/reference/config/istio.networking.v1alpha3.html#HTTPRoute) blocks, the order in which they are defined in the yaml matters.  Hence, the original `VirtualService` rule is modified rather than creating a new rule.  With the modified rule, incoming requests originating from `Firefox` browsers will go to the newer version of guestbook.  All other requests fall-through to the next block, which routes all traffic to the original version of guestbook.  
 
-Test this now by accessing the guestbook service UI you obtained earlier using a Firefox browser. Trying this in any other browser will serve a v1 guestbook.
+Test this now by accessing the guestbook service UI you obtained earlier using a Firefox browser. Trying this in any other browser will serve a v1 guestbook. Be sure to clear the browser cache, using for example 'control-shift-r' to refresh the page while clearing cache.
 
 ### Canary deployment
 In `Canary Deployments`, newer versions of services are incrementally rolled out to users to minimize the risk and impact of any bugs introduced by the newer version.  To begin incrementally routing traffic to the newer version of the guestbook service, modify the original `VirtualService` rule:
@@ -165,7 +165,7 @@ spec:
           weight: 20
 ```
 
-In the modified rule, the routed traffic is split between two different subsets of the guestbook service.  In this manner, traffic to the modernized version 2 of guestbook is controlled on a percentage basis to limit the impact of any unforeseen bugs.  This rule can be modified over time until eventually all traffic is directed to the newer version of the service.
+In the modified rule, the routed traffic is split between two different subsets of the guestbook service.  In this manner, traffic to the modernized version 2 of guestbook is controlled on a percentage basis to limit the impact of any unforeseen bugs.  This rule can be modified over time until eventually all traffic is directed to the newer version of the service. Be sure to clear the browser cache when trying this, using for example 'control-shift-r' to refresh the page while clearing cache.
 
 ### Implementing circuit breakers with destination rules
 Istio `DestinationRules` allow users to configure Envoy's implementation of [circuit breakers](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/circuit_breaking).  Circuit breakers are critical for defining the behavior for service-to-service communication in the service mesh.  In the event of a failure for a particular service, circuit breakers allow users to set global defaults for failure recovery on a per service and/or per service version basis.  Users can apply a [traffic policy](https://istio.io/docs/reference/config/istio.networking.v1alpha3.html#TrafficPolicy) at the top level of the `DestinationRule` to create circuit breaker settings for an entire service, or it can be defined at the subset level to create settings for a particular version of a service.
