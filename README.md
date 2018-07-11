@@ -45,18 +45,18 @@ You should have a basic understanding of containers, IBM Cloud Kubernetes Servic
 
 
 ## Workshop setup
-- [Exercise 0 - Creating an IBM Cloud Account and creating a kubernetes cluster](exercise-0/README.md)
-- [Exercise 1 - Accessing a Kubernetes cluster with IBM Cloud Kubernetes Service](exercise-1/README.md)
-- [Exercise 2 - Installing Istio](exercise-2/README.md)
-- [Exercise 3 - Deploying Guestbook with Istio Proxy](exercise-3/README.md)
+- [Exercise 0 - Creating an IBM Cloud Account and creating a kubernetes cluster](workshop/exercise-0/README.md)
+- [Exercise 1 - Accessing a Kubernetes cluster with IBM Cloud Kubernetes Service](workshop/exercise-1/README.md)
+- [Exercise 2 - Installing Istio](workshop/exercise-2/README.md)
+- [Exercise 3 - Deploying Guestbook with Istio Proxy](workshop/exercise-3/README.md)
 
 ## Creating a service mesh with Istio
 
-- [Exercise 4 - Observe service telemetry: metrics and tracing](exercise-4/README.md)
-- [Exercise 5 - Expose the service mesh with the Istio Ingress Gateway](exercise-5/README.md)
-- [Exercise 6 - Perform traffic management](exercise-6/README.md)
-- [Exercise 7 - Secure your service mesh](exercise-7/README.md)
-- [Exercise 8 - Enforce policies for microservices](exercise-8/README.md)
+- [Exercise 4 - Expose the service mesh with the Istio Ingress Gateway](workshop/exercise-4/README.md)
+- [Exercise 5 - Perform traffic management](workshop/exercise-5/README.md)
+- [Exercise 6 - Observe service telemetry: metrics and tracing](workshop/exercise-6/README.md)
+- [Exercise 7 - Secure your service mesh](workshop/exercise-7/README.md)
+- [Exercise 8 - Enforce policies for microservices](workshop/exercise-8/README.md)
 
 
 # Where to get more?
