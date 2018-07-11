@@ -108,6 +108,16 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
 
    4. Log into your Datadog account and use the Metrics Explorer to view Istio metrics (e.g. [`istio.mesh.request.count`](https://app.datadoghq.com/metric/explorer?live=true&page=0&exp_metric=istio.mesh.request.count)) or create some Dashboards.
 
+
+## Create RE dashboard in Datadog
+
+RED (in monitoring) stands for Rate, Errors, and Duration. It is a quick and simple way to get some visibility. Using a datadog notebook, create the R(ate) and E(rrors) graphs on a simple dashboard. Use the following pictures as guides. Remember to add a 1 minute or 1 second average!
+
+
+![rate](rate_dd.png)
+![errors](errors_dd.png)
+
+
 ## Distributing Tracing, Service Graphs & the Future
 
 The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonset. For your own custom applications, you can use one of the [Datadog APM libraries](https://docs.datadoghq.com/developers/libraries/#apm-tracing-client-libraries) to instrument your application. However, just like Istio is a good point to collect telemetry in one place, it's also useful for easily seeing how all of your services communicate with each other. Support for Datadog APM directly in Istio is coming soon.
