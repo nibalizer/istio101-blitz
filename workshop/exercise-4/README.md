@@ -118,6 +118,27 @@ RED (in monitoring) stands for Rate, Errors, and Duration. It is a quick and sim
 ![errors](errors_dd.png)
 
 
+## Useful commands to generate load on the app
+
+To generate 404s
+
+```shell
+while true; do sleep 0.5;  curl http://<guestbook_endpoint>/lrandomurl; echo; done
+```
+
+To generate simple 'read access' 200s
+
+```shell
+while true; do sleep 0.5;  curl http://<guestbook_endpoint>/lrange/guestbook; echo; done
+```
+
+To generate 200s, write something to the database, and cause guestbook to hit avatar
+
+```shell
+while true; do sleep 0.5; curl 'http://173.193.99.97:31667/rpush/guestbook/Spencer/CoolWebsite'; echo; done
+```
+
+
 ## Distributing Tracing, Service Graphs & the Future
 
 The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonset. For your own custom applications, you can use one of the [Datadog APM libraries](https://docs.datadoghq.com/developers/libraries/#apm-tracing-client-libraries) to instrument your application. However, just like Istio is a good point to collect telemetry in one place, it's also useful for easily seeing how all of your services communicate with each other. Support for Datadog APM directly in Istio is coming soon.
