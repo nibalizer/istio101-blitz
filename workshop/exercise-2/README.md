@@ -1,14 +1,14 @@
 # Exercise 2 - Installing Istio on IBM Cloud Kubernetes Service
 In this module, you download and install Istio.
 
-1.  Either download Istio directly from [https://github.com/istio/istio/releases](https://github.com/istio/istio/releases) or get the latest version by using curl:
+1.  Either download Istio directly from [https://github.com/istio/istio/releases](https://github.com/istio/istio/releases) or get the latest version by using curl. Note that this workshop requires version `0.8.0`.
     ```bash
     curl -L https://git.io/getLatestIstio | sh -
     ```
 2. Extract the installation files.
 3. Add the `istioctl` client to your PATH. The `<version-number>` is in the directory name. For example, run the following command on a MacOS or Linux system:
 ```
-export PATH=$PWD/istio-<version-number>/bin:$PATH
+export PATH=$PWD/istio-0.8.0/bin:$PATH
 ```
 4. Change the directory to the Istio file location.
 
@@ -16,6 +16,7 @@ export PATH=$PWD/istio-<version-number>/bin:$PATH
 ```bash
 kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
+> Note that this is a full installation of Istio - not a "demo" as the filename suggests.
 
 6. Ensure that the `istio-*` Kubernetes services are deployed before you continue.
 ```bash
@@ -45,18 +46,20 @@ kubectl get pods -n istio-system
 ```
 ```
 NAME                                        READY     STATUS    RESTARTS   AGE
-grafana-cd99bf478-kpwnk                     1/1       Running   0          1m
-istio-citadel-ff5696f6f-5pw9p               1/1       Running   0          1m
-istio-egressgateway-58d98d898c-d42f4        1/1       Running   0          1m
-istio-ingressgateway-6bc7c7c4bc-f78xr       1/1       Running   0          1m
-istio-pilot-6c5c6b586c-dv7fs                2/2       Running   0          1m
-istio-policy-5c7fbb4b9f-pj6zz               2/2       Running   0          1m
-istio-sidecar-injector-dbd67c88d-ds9xn      1/1       Running   0          1m
-istio-statsd-prom-bridge-6dbb7dcc7f-9z6h5   1/1       Running   0          1m
-istio-telemetry-54b5bf4847-gmgxt            2/2       Running   0          1m
-istio-tracing-67dbb5b89f-lwmzf              1/1       Running   0          1m
-prometheus-586d95b8d9-hqfn6                 1/1       Running   0          1m
-servicegraph-6d86dfc6cb-hprh2               1/1       Running   0          1m
+grafana-cd99bf478-6xjv5                     1/1       Running     0          9h
+istio-citadel-ff5696f6f-jsrtj               1/1       Running     0          9h
+istio-cleanup-old-ca-dxtkn                  0/1       Completed   0          9h
+istio-egressgateway-58d98d898c-j2zp9        1/1       Running     0          9h
+istio-ingressgateway-6bc7c7c4bc-bqhq2       1/1       Running     0          9h
+istio-mixer-post-install-fz7hj              0/1       Completed   0          9h
+istio-pilot-6c5c6b586c-fb8qn                2/2       Running     0          9h
+istio-policy-5c7fbb4b9f-ntf85               2/2       Running     0          9h
+istio-sidecar-injector-dbd67c88d-nvskh      1/1       Running     0          9h
+istio-statsd-prom-bridge-6dbb7dcc7f-7rskf   1/1       Running     0          9h
+istio-telemetry-54b5bf4847-dcd2j            2/2       Running     0          9h
+istio-tracing-67dbb5b89f-28zfs              1/1       Running     0          9h
+prometheus-586d95b8d9-fj6mq                 1/1       Running     0          9h
+servicegraph-6d86dfc6cb-v6cmz               1/1       Running     0          9h
 ```
 
 Before your continue, make sure all the pods are deployed and **`Running`**. If they're in `pending` state, wait a few minutes to let the deployment finish.
