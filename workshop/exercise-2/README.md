@@ -3,6 +3,7 @@ In this module, you download and install Istio.
 
 1.  Either download Istio directly from [https://github.com/istio/istio/releases](https://github.com/istio/istio/releases) or get the latest version by using curl. Note that this workshop requires version `0.8.0`.
     ```bash
+    cd ~ # or wherever you want your Istio installation to live
     curl -L https://git.io/getLatestIstio | sh -
     ```
 2. Extract the installation files.

@@ -1,8 +1,8 @@
 # Exercise 1 - Accessing a Kubernetes cluster with IBM Cloud Kubernetes Service
 
-You must already have a [cluster created](https://console.bluemix.net/docs/containers/container_index.html#container_index). Here are the steps to access your cluster.
+Get started by installing pre-requisite command-line tools for the workshop and logging in.
 
-## Install IBM Cloud Kubernetes Service command line utilities
+## Install IBM Cloud Kubernetes Service command-line utilities
 
 1. Install the IBM Cloud [command line interface](https://console.bluemix.net/docs/cli/reference/bluemix_cli/get_started.html#getting-started).
 
@@ -35,6 +35,7 @@ You must already have a [cluster created](https://console.bluemix.net/docs/conta
     
 6. Install the Kubernetes CLI. Go to the [Kubernetes page](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-binary-via-curl) to install the CLI and follow the steps.
 
+To proceed, your Kubernetes cluster must be started - the state should change from "Pending" to "Normal". Here are the steps to access your cluster.
 
 ## Access your cluster
 Learn how to set the context to work with your cluster by using the `kubectl` CLI, access the Kubernetes dashboard, and gather basic information about your cluster.

@@ -1,4 +1,4 @@
-# Exercise 7 - Secure your services
+# Exercise 7 - Secure your services (OPTIONAL)
 
 ## Mutual authentication with Transport Layer Security (mTLS)
 
@@ -102,7 +102,6 @@ kubectl get pods -l app=guestbook
 NAME                            READY     STATUS    RESTARTS   AGE
 guestbook-v2-784546fbb9-299jz   2/2       Running   0          13h
 guestbook-v2-784546fbb9-hsbnq   2/2       Running   0          13h
-guestbook-v2-784546fbb9-lcxdz   2/2       Running   0          13h
 ```
 
 2. SSH into the Envoy container. Make sure to change the pod name into the corresponding one on your system. This command will execute into istio-proxy container (sidecar) of the pod.
@@ -144,5 +143,3 @@ Note that `cert-chain.pem` is Envoy’s public certificate (i.e., presented to t
 * [Istio Task](https://istio.io/docs/tasks/security/mutual-tls.html)
 
 * [Istio Concept](https://istio.io/docs/concepts/security/mutual-tls.html)
-
-## DON NOT USE IT - [Continue to Exercise 8 - Policy Enforcement](../exercise-8/README.md)

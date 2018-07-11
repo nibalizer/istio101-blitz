@@ -5,6 +5,7 @@ The components deployed on the service mesh by default are not exposed outside t
 Configure the guestbook default route with the Istio Ingress Gateway.
 
 ```sh
+cd istio101/workshop/plans
 istioctl create -f guestbook-gateway.yaml
 ```
 
@@ -61,7 +62,7 @@ kube-xxx       169.60.87.20   10.188.80.69    u2c.2x4.encrypted   normal   Ready
 
 ```
 
-The URL to access your Istio Gateway through the `node port` in the above example is `169.60.87.20:31702`. Make a note of this URL. You won't be able to access at the moment as we haven't configured a `DestinationRule` yet.
+The URL to access your Istio Gateway through the `node port` in the above example is `169.60.87.20:31702`. Make a note of this URL. You should be able to access your guestbook app with this URL - all requests are now flowing through the Istio Gateway.
 
 ### Accessing your app through the Istio Gateway with a Paid cluster
 

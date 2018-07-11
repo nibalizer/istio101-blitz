@@ -158,7 +158,7 @@ The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonse
 2. Configure Istio to automatically gather telemetry data for services that run in the service mesh.
    1. Go back to your v2 directory.
       ````
-      cd guestbook/v2
+      cd guestbook-dash/v2
       ````
 
    2. Create a rule to collect telemetry data.
@@ -204,5 +204,8 @@ Access the tracing service via node port, using the same technique as described 
 
 4. Browse to http://localhost:8088/force/forcegraph.html
 
+Congratulations! You installed Istio to Kubernetes, deployed Guestbook, upgraded it from v1 to v2 with best-practice traffic routing policies and enabled DataDog telemetry.
 
-#### [Continue to Exercise 7 - Security](../exercise-7/README.md)
+To learn about mTLS, go-on to the next optional exercise.
+
+#### [Optional Exercise 7 - Security](../exercise-7/README.md)
