@@ -11,7 +11,11 @@ In this module, you download and install Istio.
 ```
 export PATH=$PWD/istio-0.8.0/bin:$PATH
 ```
-4. Change the directory to the Istio file location.
+4. Change the directory to the Istio file location. (The folder was downloaded in the curl step above.)
+
+```bash
+cd istio-0.8.0
+```
 
 5. Install Istio on the Kubernetes cluster. Istio is deployed in the Kubernetes namespace `istio-system`.
 ```bash
