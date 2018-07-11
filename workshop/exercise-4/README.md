@@ -143,4 +143,66 @@ while true; do sleep 0.5; curl 'http://173.193.99.97:31667/rpush/guestbook/Spenc
 
 The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonset. For your own custom applications, you can use one of the [Datadog APM libraries](https://docs.datadoghq.com/developers/libraries/#apm-tracing-client-libraries) to instrument your application. However, just like Istio is a good point to collect telemetry in one place, it's also useful for easily seeing how all of your services communicate with each other. Support for Datadog APM directly in Istio is coming soon.
 
+
+## Open source and built in monitoring features of Istio
+
+### Configure Istio to receive telemetry data
+
+1. Verify that the Grafana, Prometheus, ServiceGraph and Jaeger add-ons were installed successfully. All add-ons are installed into the `istio-system` namespace.
+   ```console
+   kubectl get pods -n istio-system
+
+   kubectl get services -n istio-system
+   ```
+
+2. Configure Istio to automatically gather telemetry data for services that run in the service mesh.
+   1. Go back to your v2 directory.
+      ````
+      cd guestbook/v2
+      ````
+
+   2. Create a rule to collect telemetry data.
+      ```sh
+      istioctl create -f guestbook-telemetry.yaml
+      ```
+
+### Jaeger
+
+1. Browse to your Jaeger service, after finding the service endpoint:
+
+      ```sh
+      kubectl get svc tracing -n istio-system
+      ```
+
+          Examples:
+          ```
+          $ kubectl get svc tracing -n istio-system
+            NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
+            tracing   LoadBalancer   172.21.35.209   <pending>       80:30217/TCP   29m
+          ```
+
+Access the tracing service via node port, using the same technique as described earlier for discovering the node port for the guestbook service. The ip is the same, and the port is seen as the second number in the output of the above command.
+
+2. From the **Services** menu, select either the **guestbook** or **avatar** service.
+
+3. Scroll to the bottom and click on **Find Traces** button to see traces
+
+
+#### Service Graph
+
+1. Establish port forwarding from local port 8088 to the Service Graph instance:
+
+   ```console
+   kubectl -n istio-system port-forward \
+     $(kubectl -n istio-system get pod -l app=servicegraph -o jsonpath='{.items[0].metadata.name}') \
+     8088:8088
+   ```
+
+2. Browse to http://localhost:8088/dotviz
+
+3. Browse to http://localhost:8088/dotviz?filter_empty=true&time_horizon=30s
+
+4. Browse to http://localhost:8088/force/forcegraph.html
+
+
 #### [Continue to Exercise 5 - Expose the service mesh with the Istio Ingress Gateway](../exercise-5/README.md)
