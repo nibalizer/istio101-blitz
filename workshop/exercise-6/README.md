@@ -18,7 +18,7 @@ To begin monitoring Istio using Datadog, you must first monitor Kubernetes.
    ```console
    kubectl apply -f datadog/rbac
    ```
-2. Next, retrieve your datadog api key (``DD_API_KEY``) from [the Datadog APIs page](https://app.datadoghq.com/account/settings#api) and place it in ``datadog/datadog-agent.yaml``
+2. Next, retrieve your Datadog API key (``DD_API_KEY``) from [the Datadog Kubernetes Integration page](https://app.datadoghq.com/account/settings#agent/kubernetes) and place it in ``datadog/datadog-agent.yaml``. Note, you can also find your API key on the [Datadog APIs page](https://app.datadoghq.com/account/settings#api), but this is a good opportunity to examine the default Datadog Kubernetes yaml file.
 
    ```console
    vim datadog/datadog-agent.yaml
@@ -44,7 +44,7 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
    ```console
    kubectl apply -f datadog/istio-config.yaml
    ```
-2. Again, retrieve your datadog api key (``DD_API_KEY``) from [the Datadog APIs page](https://app.datadoghq.com/account/settings#api) and place it in ``datadog/datadog-agent-istio.yaml``. You can also copy it from ``datadog/datadog-agent.yaml`` if you prefer.
+2. Again, retrieve your Datadog API key (``DD_API_KEY``) from [the Datadog APIs page](https://app.datadoghq.com/account/settings#api) and place it in ``datadog/datadog-agent-istio.yaml``. You can also copy it from ``datadog/datadog-agent.yaml`` if you prefer.
 
    ```console
    vim datadog/datadog-agent-istio.yaml
