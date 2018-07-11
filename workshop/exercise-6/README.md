@@ -15,6 +15,25 @@ A [ServiceEntry](https://istio.io/docs/reference/config/istio.networking.v1alpha
 ## The Guestbook app
 In the Guestbook app, there is one service: guestbook.  The guestbook service has two distinct versions: the base version (version 1) and the modernized version (version 2).  Each version of the service has three instances based on the number of replicas in [guestbook-deployment.yaml](https://github.com/linsun/examples/blob/master/guestbook-go/guestbook-deployment.yaml) and [guestbook-v2-deployment.yaml](https://github.com/linsun/examples/blob/master/guestbook-go/guestbook-v2-deployment.yaml).  By default, prior to creating any rules, Istio will route requests equally across version 1 and version 2 of the guestbook service and their respective instances in a round robin manner.  However, new versions of a service can easily introduce bugs to the service mesh, so following A/B Testing and Canary Deployments is good practice.
 
+
+### Deploy v2 of Guestbook alongside v1
+
+#### TODO deploy v2
+
+##### Install the Avatar app using the same process
+
+1. Inject the Istio Envoy side car into the Avatar pods and deploy it to the cluster.
+```sh
+kubectl apply -f <(istioctl kube-inject -f avatar-deployment.yaml)
+```
+
+2. Create the Avatar service record
+```sh
+kubectl create -f avatar-service.yaml
+```
+
+
+
 ### A/B testing with Istio
 A/B testing is a method of performing identical tests against two separate service versions in order to determine which performs better.  To prevent Istio from performing the default routing behavior between the original and modernized guestbook service, define the following rules (found in [istio101/workshop/plans](https://github.com/IBM/istio101/tree/master/workshop/plans)):
 
