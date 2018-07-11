@@ -16,12 +16,19 @@ To begin monitoring Istio using Datadog, you must first monitor Kubernetes.
 
 1. Start by setting up the Datadog RBAC role, service account, and role binding. Note that you can easily install all the yaml files in a directory by passing the directory name to `kubectl`.
    ```console
-   kubectl apply -f datadog/rbac
+   cd guestbook-dash/v2
    ```
-2. Next, retrieve your Datadog API key (``DD_API_KEY``) from [the Datadog Kubernetes Integration page](https://app.datadoghq.com/account/settings#agent/kubernetes) and place it in ``datadog/datadog-agent.yaml``. Note, you can also find your API key on the [Datadog APIs page](https://app.datadoghq.com/account/settings#api), but this is a good opportunity to examine the default Datadog Kubernetes yaml file.
 
    ```console
-   vim datadog/datadog-agent.yaml
+   kubectl apply -f datadog/rbac
+   ```
+2. Next, retrieve your datadog api key (``DD_API_KEY``) from [here](https://app.datadoghq.com/account/settings#agent/kubernetes) and place it in ``datadog/datadog-agent.yaml``
+
+   datadog/datadog-agent.yaml
+   ```yaml
+   env:
+     - name: DD_API_KEY
+       value: <your_api_key> #quotes not necessary
    ```
 
 3. Next, create the Datadog Agent [daemonset](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
@@ -44,10 +51,13 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
    ```console
    kubectl apply -f datadog/istio-config.yaml
    ```
-2. Again, retrieve your Datadog API key (``DD_API_KEY``) from [the Datadog APIs page](https://app.datadoghq.com/account/settings#api) and place it in ``datadog/datadog-agent-istio.yaml``. You can also copy it from ``datadog/datadog-agent.yaml`` if you prefer.
+2. Again, retrieve your datadog api key (``DD_API_KEY``) from [here](https://app.datadoghq.com/account/settings#agent/kubernetes) and place it in ``datadog/datadog-agent.yaml``. You can also copy it from ``datadog/datadog-agent.yaml`` if you prefer.
 
-   ```console
-   vim datadog/datadog-agent-istio.yaml
+  datadog/datadog-agent-istio.yaml:
+   ```yaml
+   env:
+     - name: DD_API_KEY
+       value: <your_api_key> #quotes not necessary
    ```
 
 3. Update the Datadog Agent daemonset to use your ConfigMap.
@@ -70,12 +80,7 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
 
 4. Now that Datadog is monitoring Istio, let's test it out by generating some load on your guestbook application.
 
-   1. For paid cluster, you can acceess the guestbook via the external IP for your service as guestbook is deployed as a load blanacer service.  Get the EXTERNAL-IP of the guestbook service via output below:
-      ```console
-      kubectl get service guestbook -n default
-      ```
-
-   2. For lite cluster, first, get the worker's public IP:
+   1. For lite cluster, first, get the worker's public IP (you can also use the same link from Exercises 4 and 5):
       ```console
       bx cs workers <cluster_name>
       ```
@@ -89,21 +94,26 @@ In this exercise we'll use the second method to monitor Istio. In [Exercise 2](.
 
       Second, get the node port:
       ```console
-      kubectl get svc guestbook -n default
+      kubectl get svc istio-ingressgateway -n istio-system
       ```
 
       Examples:
       ```
-      $ kubectl get svc guestbook -n default
+      $ kubectl get svc istio-ingressgateway -n istio-system
       NAME        TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE
       guestbook   LoadBalancer   172.21.134.6   pending        80:31702/TCP   4d
       ```
 
       The node port in above sample output is `169.60.87.20:31702`
 
+   2. For paid cluster, you can access the guestbook via the external IP for your service as guestbook is deployed as a load balancer service.  Get the EXTERNAL-IP of the guestbook service via output below:
+      ```console
+      kubectl get service istio-ingressgateway -n istio-system
+      ```
+
    3. Generate a small load to the app.
       ```console
-      while sleep 0.5; do curl http://<guestbook_endpoint/lrange/guestbook; echo; done
+      while sleep 0.5; do curl http://<guestbook_endpoint>/lrange/guestbook; echo; done
       ```
 
    4. Log into your Datadog account and use the Metrics Explorer to view Istio metrics (e.g. [`istio.mesh.request.count`](https://app.datadoghq.com/metric/explorer?live=true&page=0&exp_metric=istio.mesh.request.count)) or create some Dashboards.
@@ -158,7 +168,7 @@ The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonse
 2. Configure Istio to automatically gather telemetry data for services that run in the service mesh.
    1. Go back to your v2 directory.
       ````
-      cd guestbook/v2
+      cd guestbook-dash/v2
       ````
 
    2. Create a rule to collect telemetry data.
@@ -174,7 +184,7 @@ The Datadog Trace Agent runs automatically as part of the Datadog Agent daemonse
       kubectl get svc tracing -n istio-system
       ```
 
-          Examples:
+          Example:
           ```
           $ kubectl get svc tracing -n istio-system
             NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
@@ -204,5 +214,8 @@ Access the tracing service via node port, using the same technique as described 
 
 4. Browse to http://localhost:8088/force/forcegraph.html
 
+Congratulations! You installed Istio to Kubernetes, deployed Guestbook, upgraded it from v1 to v2 with best-practice traffic routing policies and enabled DataDog telemetry.
 
-#### [Continue to Exercise 7 - Security](../exercise-7/README.md)
+To learn about mTLS, go-on to the next optional exercise.
+
+#### [Optional Exercise 7 - Security](../exercise-7/README.md)
