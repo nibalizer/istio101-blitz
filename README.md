@@ -57,3 +57,17 @@ You should have a basic understanding of containers, IBM Cloud Kubernetes Servic
 - [Exercise 6 - Perform traffic management](exercise-6/README.md)
 - [Exercise 7 - Secure your service mesh](exercise-7/README.md)
 - [Exercise 8 - Enforce policies for microservices](exercise-8/README.md)
+
+
+# Where to get more?
+
+Twitter: @gitbisect, @nibalizer, @sai_vennam
+
+IBM Code: [https://developer.ibm.com/code](https://developer.ibm.com/code)
+
+Twitch: [https://twitch.tv/ibmcode](https://twitch.tv/ibmcode)
+
+
+## Further reading
+
+* [Networking in istio](https://istio.io/blog/2018/v1alpha3-routing/)
