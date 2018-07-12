@@ -49,7 +49,7 @@ A/B testing is a method of performing identical tests against two separate servi
 To begin, let's route all traffic to Guestbook v1 and prevent default Istio routing behavior.
 
 ```sh
-cd istio101/workshop/plans
+cd guestbook-dash
 ```
 
 ```console

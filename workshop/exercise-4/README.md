@@ -5,7 +5,7 @@ The components deployed on the service mesh by default are not exposed outside t
 Configure the guestbook default route with the Istio Ingress Gateway.
 
 ```sh
-cd istio101/workshop/plans
+cd guestbook-dash
 istioctl create -f guestbook-gateway.yaml
 ```
 
