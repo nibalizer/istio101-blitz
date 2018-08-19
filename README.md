@@ -1,17 +1,13 @@
 # Istio 101
 
-Istio 101 Workshop presented by IBM at Datadog Dash 7-11-2018
+The Blitz version of the Istio 101 Workshop presented by IBM
+This will be a fast run through of some of the basic Istio features. If attendees come with a kubernetes cluster already configured, this can be done in 70 minutes.
 
 ## Presenters:
 
-* Sai Vennam, IBM
-* Jason Yee, Datadog
+* Spencer Krum, IBM
 
 ## Assistants:
-
-* Joe Sepi, IBM
-* Helen Lam, IBM
-* Spencer Krum, IBM
 
 # Beyond the Basics: Istio and IBM Cloud Kubernetes Service
 [Istio](https://istio.io/) is an open platform to connect, secure, and manage a network of microservices, also known as a service mesh, on cloud platforms such as Kubernetes in IBM Cloud Kubernetes Service. With Istio, You can manage network traffic, load balance across microservices, enforce access policies, verify service identity on the service mesh, and more.
@@ -61,7 +57,7 @@ You should have a basic understanding of containers, IBM Cloud Kubernetes Servic
 
 # Where to get more?
 
-Twitter: @gitbisect, @nibalizer, @sai_vennam
+Twitter: @nibalizer, @sai_vennam
 
 IBM Code: [https://developer.ibm.com/code](https://developer.ibm.com/code)
 
