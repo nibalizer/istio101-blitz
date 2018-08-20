@@ -1,114 +1,114 @@
-# Exercise 3 - Deploy the Guestbook app with Istio Proxy
+# Exercise 3 - Validate Istio Installation
 
-The Guestbook app is a sample app for users to leave comments. It consists of a web front end, Redis master for storage, and replicated set of Redis slaves. Here are the steps to deploy the app on your Kubernetes cluster:
+In this exercise, you will validate your Istio installation and launch some debugging containers to experiment with the service mesh.
 
-### Download the Guestbook app
-1. Open your preferred terminal and download the Guestbook app from GitHub. (Note we are using a version customized for Dash!)
-  ```sh
-  git clone https://github.com/nibalizer/guestbook-dash.git
-  ```
-2. Navigate into the app directory.
-  ```sh
-  cd guestbook-dash/v1
-  ```
 
-### Create a Redis database
-The Redis database is a service that you can use to persist the data of your app. The Redis database comes with a master and slave modules.
+## Service Mesh Sidecar
 
-1. Create the Redis controllers and services for both the master and the slave.
-  ``` sh
-  kubectl create -f redis-master-deployment.yaml
-  kubectl create -f redis-master-service.yaml
-  kubectl create -f redis-slave-deployment.yaml
-  kubectl create -f redis-slave-service.yaml
-  ```
-2. Verify that the Redis controllers for the master and the slave are created.
-  ```sh
-  kubectl get deployment
-  NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-  redis-master   1         1         1            1           5d
-  redis-slave    2         2         2            2           5d
-  ```
-3. Verify that the Redis services for the master and the slave are created.
-  ```sh
-  kubectl get svc
-  NAME           TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-  redis-master   ClusterIP      172.21.85.39    <none>          6379/TCP       5d
-  redis-slave    ClusterIP      172.21.205.35   <none>          6379/TCP       5d
-  ```
-4. Verify that the Redis pods for the master and the slave are up and running.
-  ```sh
-  kubectl get pods
-  NAME                            READY     STATUS    RESTARTS   AGE
-  redis-master-4sswq              1/1       Running   0          5d
-  redis-slave-kj8jp               1/1       Running   0          5d
-  redis-slave-nslps               1/1       Running   0          5d
-  ```
+![istio architecture](istio-whatisit.svg)
+
+Istio's core functionality is achieved by setting up a proxy, or sidecar, inside every kubernetes pod. Outgoing and incoming traffic bound for the pod is intercepted by iptables and delivered to the `envoy` daemon running in the sidecar. The `envoy` proxy can then inspect, modify, forward, and record all traffic used by the application. East-West traffic goes through two `envoy` proxies, one at source and one at destination. All `envoy` proxies are configured by `pilot`, an Istio component.
+
 ## Sidecar injection
 
-In Kubernetes, a sidecar is a utility container in the pod, and its purpose is to support the main container. For Istio to work, Envoy proxies must be deployed as sidecars to each pod of the deployment. There are two ways of injecting the Istio sidecar into a pod: manually using istioctl CLI tool or automatically using the Istio Initializer. In this exercise, we will use the manual injection. Manual injection modifies the controller configuration, e.g. deployment. It does this by modifying the pod template spec such that all pods for that deployment are created with the injected sidecar.
+In Kubernetes, a sidecar is a utility container in the pod, and its purpose is to support the main container. For Istio to work, Envoy proxies must be deployed as sidecars to each pod of the deployment. There are two ways of injecting the Istio sidecar into a pod: manually using istioctl CLI tool or automatically using the Istio Initializer. In a previous step, we set up our cluster to use automatic injection.
 
-## Install the Guestbook app with manual sidecar injection
+## Terminals
 
-1. Inject the Istio Envoy sidecar into the guestbook pods, and deploy the Guestbook app on to the Kubernetes cluster.
-```sh
-kubectl apply -f <(istioctl kube-inject -f guestbook-deployment.yaml)
-```
-This command will inject configuration for an Istio Envoy sidecar into the guestbook deployment file, and then deploy the guestbook app and sidecar.
+In the upcoming exercises, it is useful to have multiple terminals open. Each will need the `KUBECONFIG` environment variable you exported earlier in the tutorial. If you get errors like:
 
-2. Create the guestbook service.
-```sh
-kubectl create -f guestbook-service.yaml
+```bash
+kubectl get pod
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
 ```
 
-3. Verify that the service was created.
+Go back and export that environment variable and try again.
 
-```sh
-kubectl get svc
-NAME           TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-guestbook      LoadBalancer   172.21.36.181   169.61.37.140   80:32149/TCP   5d
-```
-**Note: For Lite clusters, the external ip will not be avaiable. That is expected.**
 
-4. Verify that the pods are up and running.
-```sh
-kubectl get pods
-NAME                            READY     STATUS    RESTARTS   AGE
-guestbook-v1-56d98b558c-7fvd5   2/2       Running   0          5d
-guestbook-v1-56d98b558c-dshkh   2/2       Running   0          5d
+### Launch a debug container
+
+```bash
+kubectl run -i --tty poke2-`date +%s` --image=nibalizer/utilities --restart=ver -- sh
 ```
 
-Note that each guestbook pod has 2 containers in it. One is the guestbook container, and the other is the Envoy proxy sidecar. Tip: You can validate that the pod has two containers running with ``kubectl describe pod <podname>``.
+This container is running with plenty of utilities. A great way to debug issues in your cluster. Full credit to [Paul](https://twitter.com/pczarkowski) for teaching us this one.
+Leave this container running, and examine it with a different terminal.
 
-
-## Access the guestbook
-
-Now it's time to view the app. Since this is a free tier cluster, we'll be using ``node port`` to access the cluster. In paid versions, ``LoadBalancers`` and ``Ingress Controllers`` are available.
-
-1. Get the port the service is running on.
-
-```sh
-kubectl get svc
-NAME           TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-guestbook      LoadBalancer   172.21.36.181   <none>          80:32149/TCP   5d
-...
+```bash
+kubectl get pod
+NAME                     READY     STATUS        RESTARTS   AGE
+poke2-1534738056         2/2       Running       0          35m
 ```
 
-In this example, the port is ``32149`` which is the number following ``80:`` in the ``PORT(S)`` section.
+Note that the pod is running, and that it has a `2/2` for containers. That's the sidecar!
 
-2. Get the external (public) IP of the cluster. For a single node, this is straightforward.
+Lets dig deeper:
 
-
-```sh
-$ bx cs workers testcluster
-OK
-ID                                                 Public IP       Private IP    Machine Type   State    Status   Zone    Version   
-kube-hou02-pa1d801f8732df4e1fb8e067cfdcfa1646-w1   173.193.99.97   10.47.64.86   free           normal   Ready    hou02   1.9.8_1517 
+```bash
+kubectl describe pod/poke2-1534738056
 ```
 
-The Public IP is ``173.193.99.97``.
+There is a ton of output in here! Note that we have an `init-container` referenced, an `init-container` is a contianer that runs before the main application comes up. This is used all over Kubernetes. It's a great place to just run a little intializer script or what-have-you. In this case the `init-container` runs a script that runs a bunch of `iptables` commands that reroute all network traffic through the sidecar. You can view the logs of that like this:
 
-3. Access the guestbook application in a browser : http://<public_ip>:<nodeport>. In this example, it's http://173.193.99.97:32149/.
+```bash
+kubectl logs poke2-1534738056 -c istio-init
+```
+
+You can see all the `iptables` magic there. Also note that when we have more than one container in the pod, we have to use the `-c` flag to specify which contianer we're refering to.
+
+Further down the `describe` output, we can see that there is a long running sidecar container called `istio-proxy`. We can see in the args to the container what kind of configuration information it has. Note the `istio-pilot` discovery address. This is how every sidecar checks into the `pilot` system to get configuration. There is more digging to do here, but let's move on.
 
 
-#### [Continue to Exercise 4 - Istio Ingress Gateway](../exercise-4/README.md)
+### See the proxy in action
+
+Create an nginx service
+
+```bash
+kubectl apply -f nginx.yaml
+```
+
+And inspect
+
+```
+kubectl get pod
+NAME                     READY     STATUS    RESTARTS   AGE
+nginx-645dbd8899-mwnsc   2/2       Running   0          4s
+poke2-1534738056         2/2       Running   0          52m
+```
+
+```bash
+kubectl describe pod/nginx-645dbd8899-mwnsc
+```
+
+This looks pretty much like the other pod. Both an `init-container` and an `istio-proxy` sidecar container are present.
+
+Now, lets see the traffic moving between pods via the proxy mesh.
+
+In one terminal, start watching logs on the nginx's istio sidecar.
+
+```bash
+kubectl logs nginx-645dbd8899-mwnsc -c istio-proxy -f
+```
+> Note, your exact pod name will be different.
+
+In the other terminal, the one still at a root shell in the utilities container, make some requests.
+
+```bash
+curl nginx
+curl nginx
+curl nginx:3000
+```
+
+In your logs terminal, you should be seeing the requests filter through that `envoy` process.
+
+```
+[2018-08-20T05:10:27.314Z] "GET / HTTP/1.1" 200 - 0 612 5 0 "-" "curl/7.47.0" "9891a5fe-910b-912c-978b-2ead37c27528" "nginx" "127.0.0.1:80"
+[2018-08-20T05:10:54.802Z] "GET / HTTP/1.1" 200 - 0 612 0 0 "-" "curl/7.47.0" "61fb9a7f-c0bf-9e01-bd01-2b23ba0fe088" "nginx" "127.0.0.1:80"
+```
+
+You can find all 3 stops of the request in the logs. First at the sidecar in the source pod, then at the sidecar in the destination pod (that's what we just looked at), and finally in the application logs inside the destination pod.
+
+
+You've now done some basic Istio poking, and hopefully have a deeper understanding of what is going on when we use Istio as a service mesh.
+
+You can now continue to [Exercise 4](../exercise-4/README.md), where we'll deploy an application in an istio-enabled cluster, and explore more of Istio's features.
