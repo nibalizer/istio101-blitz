@@ -25,6 +25,11 @@ kubectl apply -f install/kubernetes/istio-demo.yaml
 ```
 > Note that this is a full installation of Istio - not a "demo" as the filename suggests.
 
+7. Label the default namespace for automatic sidecar injection
+```bash
+kubectl label namespace default istio-injection=enabled
+```
+
 7. Ensure that the `istio-*` Kubernetes services are deployed before you continue.
 ```bash
 kubectl get svc -n istio-system
