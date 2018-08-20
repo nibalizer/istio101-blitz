@@ -4,7 +4,7 @@ In this exercise, you'll create an account, attach a feature (promo) code, and c
 
 ## Create an IBM Cloud Account
 
-1. Visit this [registration link](https://ibm.biz/BdYB5d) and sign up. Follow futher steps with email validation and so on.
+1. Visit this [registration link](https://ibm.biz/istiomeetup) and sign up. Follow futher steps with email validation and so on. Note that you need to navigate back to [IBM cloud](https://console.bluemix.net/).
 
 2. Get a feature code from this [spreadsheet](https://docs.google.com/spreadsheets/d/1WRJ0CuFRF8bHdUvo0S1EDrGgOrECSpL9gjVUdbOvxQw/edit?usp=sharing). Be sure to mark which one you took so your neighbor doesn't get an error!
 
