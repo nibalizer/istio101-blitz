@@ -51,8 +51,6 @@ You should have a basic understanding of containers, IBM Cloud Kubernetes Servic
 - [Exercise 4 - Expose the service mesh with the Istio Ingress Gateway](workshop/exercise-4/README.md)
 - [Exercise 5 - Perform traffic management](workshop/exercise-5/README.md)
 - [Exercise 6 - Observe service telemetry: metrics and tracing](workshop/exercise-6/README.md)
-- [Exercise 7 - Secure your service mesh](workshop/exercise-7/README.md)
-- [Exercise 8 - Enforce policies for microservices](workshop/exercise-8/README.md)
 
 
 # Where to get more?
